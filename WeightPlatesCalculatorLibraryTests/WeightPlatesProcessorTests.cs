@@ -30,4 +30,27 @@ public class WeightPlatesProcessorTests
         // Assert
         Assert.Equal(expected, result);
     }
+
+    [Theory]
+    [InlineData(0.5, 1.25)]
+    [InlineData(1.25, 0.5)]
+    [InlineData(1.25, 10)]
+    public void MismatchingTargetAndSingleWeightShouldReturnNoWeights(double weight, double targetWeight)
+    {
+        // Arrange
+        List<double> expected = new();
+
+        List<double> result = new();
+
+        var weightPlatesCalculator = new WeightPlatesProcessor();
+
+        // Act
+        weightPlatesCalculator.GetPlatesForTargetWeight(new List<double> { weight },
+                                                        1,
+                                                        targetWeight,
+                                                        result);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
 }
