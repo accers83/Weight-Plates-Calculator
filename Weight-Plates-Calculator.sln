@@ -5,6 +5,8 @@ VisualStudioVersion = 17.13.35913.81 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeightPlatesCalculatorLibrary", "WeightPlatesCalculatorLibrary\WeightPlatesCalculatorLibrary.csproj", "{4D9594FF-897D-44E7-A79A-BCB4D79B2D46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeightPlatesCalculatorLibraryTests", "WeightPlatesCalculatorLibraryTests\WeightPlatesCalculatorLibraryTests.csproj", "{44ECE94B-41BE-4271-91CE-2C3C8A174530}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4D9594FF-897D-44E7-A79A-BCB4D79B2D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D9594FF-897D-44E7-A79A-BCB4D79B2D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D9594FF-897D-44E7-A79A-BCB4D79B2D46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44ECE94B-41BE-4271-91CE-2C3C8A174530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44ECE94B-41BE-4271-91CE-2C3C8A174530}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44ECE94B-41BE-4271-91CE-2C3C8A174530}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44ECE94B-41BE-4271-91CE-2C3C8A174530}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
