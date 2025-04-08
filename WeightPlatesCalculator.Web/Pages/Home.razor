@@ -53,7 +53,7 @@
             }
 
             <button type="submit" class="btn btn-primary" disabled=@savePersonalisationsDisabled>Save Personalisations</button>
-
+            <button type="button" class="btn btn-outline-danger" disabled="@deletePersonalisationsDisabled" @onclick="DeletePersonalisationAsync">Remove Personalisations</button>
         </EditForm>
     </div>
 }
@@ -67,6 +67,7 @@
 @code {
     private bool displayPersonaliseForm = false;
     private bool savePersonalisationsDisabled = true;
+    private bool deletePersonalisationsDisabled = true;
     private WeightCalculationUiModel? weightCalculation;
     private WeightCalculationUiModel newWeightCalculation = new();
 
@@ -76,9 +77,21 @@
 
         if (weightCalculation is null)
         {
-            weightCalculation = new();
+            weightCalculation = GetDefaultWeightCalculation();
+        }
+        else
+        {
+            deletePersonalisationsDisabled = false;
+        }
 
-            weightCalculation.WeightsAvailable = new()
+        newWeightCalculation = weightCalculation;
+    }
+
+    private WeightCalculationUiModel GetDefaultWeightCalculation()
+    {
+        WeightCalculationUiModel output = new();
+
+        output.WeightsAvailable = new()
             {
                 new WeightPlateUiModel { Weight = 0.5, Count = 10 },
                 new WeightPlateUiModel { Weight = 1.25, Count = 10 },
@@ -88,14 +101,13 @@
                 new WeightPlateUiModel { Weight = 20, Count = 10 }
             };
 
-            weightCalculation.LiftingDevicesAvailable = new()
+        output.LiftingDevicesAvailable = new()
             {
                 new LiftingDeviceUiModel { EndsCount = LiftingDeviceEndsOption.Single, MaxPlatesPerEnd = 10 },
                 new LiftingDeviceUiModel { EndsCount = LiftingDeviceEndsOption.Double, MaxPlatesPerEnd = 10 }
             };
-        }
 
-        newWeightCalculation = weightCalculation;
+        return output;
     }
 
     private async Task SavePersonalisationsAsync()
@@ -103,7 +115,15 @@
         if (newWeightCalculation.CookiesAccepted)
         {
             await localStorage.SetItemAsync<WeightCalculationUiModel>("weightCalculation", newWeightCalculation);
+            deletePersonalisationsDisabled = false;
         }
+    }
+
+    private async Task DeletePersonalisationAsync()
+    {
+        await localStorage.RemoveItemAsync("weightCalculation");
+        newWeightCalculation = GetDefaultWeightCalculation();
+        deletePersonalisationsDisabled = true;
     }
 
     private void ToggleDisplayPersonaliseForm()
