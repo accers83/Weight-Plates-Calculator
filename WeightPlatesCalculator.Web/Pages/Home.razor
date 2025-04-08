@@ -1,0 +1,125 @@
+﻿@page "/"
+
+@inject ILocalStorageService localStorage
+
+<PageTitle>Weight Plates Calculator</PageTitle>
+
+<h1>Weight Plates Calculator</h1>
+
+
+<button type="button" class="btn btn-info" @onclick="ToggleDisplayPersonaliseForm">Personalise App</button>
+<br />
+
+@if (displayPersonaliseForm)
+{
+    @* should this be a seperate component? *@
+    <div class="m-3">
+        <EditForm Model="newWeightCalculation" OnValidSubmit="SavePersonalisationsAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+
+            <div class="input-group mb-3">
+                <div class="me-3">
+                    <InputCheckbox class="form-check-input mt-0" id="newWeightCalculation.CookiesAccepted" @bind-Value="newWeightCalculation.CookiesAccepted" />
+                    <label for="newWeightCalculation.CookiesAccepted" class="form-label alert-warning p-1">Are you happy for this app to store non-essentials data on your device?</label>
+                </div>
+            </div>
+
+
+            @{
+                foreach (var weight in newWeightCalculation.WeightsAvailable)
+                {
+                    <div class="input-group mb-3">
+                        <span for="weight.Count" class="input-group-text">@weight.Weight kg</span>
+                        <InputNumber id="weight.Count" class="form-control" @bind-Value="weight.Count"></InputNumber>
+                    </div>
+                }
+            }
+
+            @{
+                foreach (var liftingDevice in newWeightCalculation.LiftingDevicesAvailable)
+                {
+                    <div class="input-group mb-3">
+                        <span for="liftingDevice.EndsCount" class="input-group-text">@liftingDevice.EndsCount</span>
+                        <InputNumber id="liftingDevice.EndsCount" class="form-control" @bind-Value="liftingDevice.MaxPlatesPerEnd"></InputNumber>
+                    </div>
+                }
+            }
+
+
+            @{
+                savePersonalisationsDisabled = newWeightCalculation.CookiesAccepted ? false : true;
+            }
+
+            <button type="submit" class="btn btn-primary" disabled=@savePersonalisationsDisabled>Save Personalisations</button>
+
+        </EditForm>
+    </div>
+}
+
+
+
+
+<div class="mb-3">
+</div>
+
+@code {
+    private bool displayPersonaliseForm = false;
+    private bool savePersonalisationsDisabled = true;
+    private WeightCalculationUiModel? weightCalculation;
+    private WeightCalculationUiModel newWeightCalculation = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        weightCalculation = await localStorage.GetItemAsync<WeightCalculationUiModel>("weightCalculation");
+
+        if (weightCalculation is null)
+        {
+            weightCalculation = new();
+
+            weightCalculation.WeightsAvailable = new()
+            {
+                new WeightPlateUiModel { Weight = 0.5, Count = 10 },
+                new WeightPlateUiModel { Weight = 1.25, Count = 10 },
+                new WeightPlateUiModel { Weight = 2.5, Count = 10 },
+                new WeightPlateUiModel { Weight = 5, Count = 10 },
+                new WeightPlateUiModel { Weight = 10, Count = 10 },
+                new WeightPlateUiModel { Weight = 20, Count = 10 }
+            };
+
+            weightCalculation.LiftingDevicesAvailable = new()
+            {
+                new LiftingDeviceUiModel { EndsCount = LiftingDeviceEndsOption.Single, MaxPlatesPerEnd = 10 },
+                new LiftingDeviceUiModel { EndsCount = LiftingDeviceEndsOption.Double, MaxPlatesPerEnd = 10 }
+            };
+        }
+
+        newWeightCalculation = weightCalculation;
+    }
+
+    private async Task SavePersonalisationsAsync()
+    {
+        if (newWeightCalculation.CookiesAccepted)
+        {
+            await localStorage.SetItemAsync<WeightCalculationUiModel>("weightCalculation", newWeightCalculation);
+        }
+    }
+
+    private void ToggleDisplayPersonaliseForm()
+    {
+        displayPersonaliseForm = displayPersonaliseForm ? false : true;
+    }
+
+    // a form lets user customise e.g. count of weights
+    // normally hidden, reveal by button press
+    // cookie check, customise button greyed out until check box checked
+    // if customise buttons clicked, write customisations to local storage with blazored
+
+
+    // another form - input target weight and select single / double ended lifting device
+    // click button to calculate required weights for target
+    // use default values (e.g. weight plate counts) if custom values not available
+    // result - Display table? count of each required weight
+    // display error messages somehow
+}

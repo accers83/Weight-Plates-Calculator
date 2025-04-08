@@ -1,6 +1,6 @@
 ﻿namespace WeightPlatesCalculatorLibrary.Processors;
 
-public class WeightPlatesProcessor
+public class WeightPlatesProcessor : IWeightPlatesProcessor
 {
 
     public void GetPlatesForTargetWeight(List<double> weights,
