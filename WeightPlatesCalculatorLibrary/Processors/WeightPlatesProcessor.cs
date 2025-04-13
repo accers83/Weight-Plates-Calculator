@@ -1,12 +1,14 @@
-﻿namespace WeightPlatesCalculatorLibrary.Processors;
+﻿using WeightPlatesCalculatorLibrary.Models;
+
+namespace WeightPlatesCalculatorLibrary.Processors;
 
 public class WeightPlatesProcessor : IWeightPlatesProcessor
 {
 
-    public void GetPlatesForTargetWeight(List<double> weights,
+    public void GetPlatesForTargetWeight(List<WeightPlateModel> weightPlates,
                                          int maxPlates,
                                          double targetWeight,
-                                         List<double> weightCombination)
+                                         List<WeightPlateModel> combination)
     {
         // target weight must be divisable by .25
         if (targetWeight <= 0)
@@ -23,98 +25,126 @@ public class WeightPlatesProcessor : IWeightPlatesProcessor
         }
 
         maxPlates = maxPlates <= 15 ? maxPlates : 15;
+        weightPlates = weightPlates.OrderByDescending(x => x.Weight).ToList();
+        double sumWeight = 0;
 
-
-        // find all the distinct numbers in weights
-        // any that have a count > than maxPlates, restrict to a count of maxPlates
-
-        var distinctValues = weights.Distinct().ToList();
-
-        var results = distinctValues.Select(x => new
+        for (int i = 0; i < weightPlates.Count(); i++)
         {
-            Value = x,
-            Count = weights.Count(c => c == x),
-        });
-
-        List<double> weightsSubset = new();
-        foreach (var value in results)
-        {
-            int valueCount = value.Count <= maxPlates ? value.Count : maxPlates;
-            for (int i = 0; i < valueCount; i++)
+            for (var j = 0; j < weightPlates.Count; j++)
             {
-                weightsSubset.Add(value.Value);
-            }
-        }
+                sumWeight += weightPlates[i].Weight;
 
-
-        Dictionary<string, List<double>> weightCombinations = new();
-
-
-        GetPlatesForTargetWeight(weightsSubset,
-                            0,
-                            maxPlates,
-                            targetWeight,
-                            weightCombinations,
-                            new List<double>());
-
-        if (weightCombinations.Count() > 0)
-        {
-            List<List<double>> weightCombinationsTemp = new();
-            foreach (var combination in weightCombinations)
-            {
-                List<double> combinationTemp = new();
-                combination.Value.ForEach(x => combinationTemp.Add(x));
-                weightCombinationsTemp.Add(combinationTemp);
+                if (sumWeight <= targetWeight)
+                {
+                    combination.Where(x => x.Weight == weightPlates[i].Weight).First().Count++;
+                }
+                else
+                {
+                    sumWeight -= weightPlates[i].Weight;
+                    break;
+                }
             }
 
-            var bestCombination = weightCombinationsTemp.OrderBy(x => x.Count()).First();
-            weightCombination.AddRange(weightCombinationsTemp.OrderBy(x => x.Count()).First());
-        }
-    }
-
-    private void GetPlatesForTargetWeight(List<double> weights,
-                                          int index,
-                                          int maxPlates,
-                                          double targetWeight,
-                                          Dictionary<string, List<double>> weightCombinations,
-                                          List<double> subset)
-    {
-        double currentSubsetSum = 0;
-        foreach (var weight in subset)
-        {
-            currentSubsetSum += weight;
-        }
-
-        if (currentSubsetSum == targetWeight)
-        {
-            var combinationKey = string.Empty;
-            foreach (var weight in subset)
+            if (sumWeight == targetWeight)
             {
-                combinationKey += $"{weight},";
+                break;
             }
-            combinationKey = combinationKey.Remove(combinationKey.Length - 1);
 
-            if (weightCombinations.ContainsKey(combinationKey) == false)
+            if (i == (weightPlates.Count - 1) && sumWeight < targetWeight)
             {
-                List<double> combination = new();
-                subset.ForEach(x => combination.Add(x));
-                weightCombinations.Add(combinationKey, combination);
+                if (combination[i - 1].Count > 0)
+                {
+                    sumWeight -= combination[i - 1].Weight;
+                    combination[i - 1].Count--;
+
+                    sumWeight -= combination[i].Weight * combination[i].Count;
+                    combination[i].Count = 0;
+
+                    i -= 1;
+                }
+                else
+                {
+                    if (combination[i - 2].Count > 0)
+                    {
+                        sumWeight -= combination[i - 2].Weight;
+                        combination[i - 2].Count--;
+
+                        sumWeight -= combination[i - 1].Weight * combination[i - 1].Count;
+                        combination[i - 1].Count = 0;
+
+                        sumWeight -= combination[i].Weight * combination[i].Count;
+                        combination[i].Count = 0;
+
+                        i -= 2;
+                    }
+                    else
+                    {
+                        if (combination[i - 3].Count > 0)
+                        {
+                            sumWeight -= combination[i - 3].Weight;
+                            combination[i - 3].Count--;
+
+                            sumWeight -= combination[i - 2].Weight * combination[i - 2].Count;
+                            combination[i - 2].Count = 0;
+
+                            sumWeight -= combination[i - 1].Weight * combination[i - 1].Count;
+                            combination[i - 1].Count = 0;
+
+                            sumWeight -= combination[i].Weight * combination[i].Count;
+                            combination[i].Count = 0;
+
+                            i -= 3;
+                        }
+                        else
+                        {
+                            if (combination[i - 4].Count > 0)
+                            {
+                                sumWeight -= combination[i - 4].Weight;
+                                combination[i - 4].Count--;
+
+                                sumWeight -= combination[i - 3].Weight * combination[i - 3].Count;
+                                combination[i - 3].Count = 0;
+
+                                sumWeight -= combination[i - 2].Weight * combination[i - 2].Count;
+                                combination[i - 2].Count = 0;
+
+                                sumWeight -= combination[i - 1].Weight * combination[i - 1].Count;
+                                combination[i - 1].Count = 0;
+
+                                sumWeight -= combination[i].Weight * combination[i].Count;
+                                combination[i].Count = 0;
+
+                                i -= 4;
+                            }
+                            else
+                            {
+                                if (combination[i - 5].Count > 0)
+                                {
+                                    sumWeight -= combination[i - 5].Weight;
+                                    combination[i - 5].Count--;
+
+                                    sumWeight -= combination[i - 4].Weight * combination[i - 4].Count;
+                                    combination[i - 4].Count = 0;
+
+                                    sumWeight -= combination[i - 3].Weight * combination[i - 3].Count;
+                                    combination[i - 3].Count = 0;
+
+                                    sumWeight -= combination[i - 2].Weight * combination[i - 2].Count;
+                                    combination[i - 2].Count = 0;
+
+                                    sumWeight -= combination[i - 1].Weight * combination[i - 1].Count;
+                                    combination[i - 1].Count = 0;
+
+                                    sumWeight -= combination[i].Weight * combination[i].Count;
+                                    combination[i].Count = 0;
+
+                                    i -= 5;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
-
-        if (index > weights.Count() - 1)
-        {
-            return;
-        }
-
-
-        if (subset.Count() < maxPlates)
-        {
-            subset.Add(weights[index]);
-            GetPlatesForTargetWeight(weights, index + 1, maxPlates, targetWeight, weightCombinations, subset);
-            subset.RemoveAt(subset.Count() - 1);
-        }
-
-        GetPlatesForTargetWeight(weights, index + 1, maxPlates, targetWeight, weightCombinations, subset);
     }
 }

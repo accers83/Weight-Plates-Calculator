@@ -15,8 +15,7 @@ public class WeightPlatesService : IWeightPlatesService
 
     public void Initiate(WeightCalculationModel weightCalculation)
     {
-        List<double> weightsAvailable = new();
-        List<double> weightsSelected = new();
+        List<WeightPlateModel> weightsAvailable = new();
         int maxPlatesPerEnd = 0;
 
         if (weightCalculation.LiftingDeviceSelected == LiftingDeviceEndsOption.Double)
@@ -38,8 +37,7 @@ public class WeightPlatesService : IWeightPlatesService
             }
 
             maxPlatesPerEnd = weightCalculation.LiftingDevicesAvailable.Where(x => x.EndsCount == LiftingDeviceEndsOption.Double).First().MaxPlatesPerEnd;
-            weightsAvailable = weightCalculation.WeightsAvailable.DivideCountByTwo()
-                                                                 .ToMaxPlatesLimitedListOfDouble(maxPlatesPerEnd);
+            weightsAvailable = weightCalculation.WeightsAvailable.DivideCountByTwo();
         }
         else
         {
@@ -60,15 +58,12 @@ public class WeightPlatesService : IWeightPlatesService
             }
 
             maxPlatesPerEnd = weightCalculation.LiftingDevicesAvailable.Where(x => x.EndsCount == LiftingDeviceEndsOption.Single).First().MaxPlatesPerEnd;
-            weightsAvailable = weightCalculation.WeightsAvailable.ToMaxPlatesLimitedListOfDouble(maxPlatesPerEnd);
+            weightsAvailable = weightCalculation.WeightsAvailable;
         }
-
 
         _weightPlatesProcessor.GetPlatesForTargetWeight(weightsAvailable,
                                                         maxPlatesPerEnd,
                                                         weightCalculation.TargetWeight,
-                                                        weightsSelected);
-
-        weightCalculation.WeightsSelectedPerEnd = weightsSelected.ToListOfWeightPlateModel();
+                                                        weightCalculation.WeightsSelectedPerEnd);
     }
 }

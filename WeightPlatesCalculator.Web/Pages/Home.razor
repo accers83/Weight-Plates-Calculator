@@ -1,6 +1,8 @@
 ﻿@page "/"
 
+
 @inject ILocalStorageService localStorage
+@inject IWeightPlatesService weightPlatesService
 
 <PageTitle>Weight Plates Calculator</PageTitle>
 
@@ -52,94 +54,63 @@
                 savePersonalisationsDisabled = newWeightCalculation.CookiesAccepted ? false : true;
             }
 
-            <button type="submit" class="btn btn-primary" disabled=@savePersonalisationsDisabled>Save Personalisations</button>
+            <button type="submit" class="btn btn-success" disabled=@savePersonalisationsDisabled>Save Personalisations</button>
             <button type="button" class="btn btn-outline-danger" disabled="@deletePersonalisationsDisabled" @onclick="DeletePersonalisationAsync">Remove Personalisations</button>
         </EditForm>
     </div>
 }
 
+<div class="m-3">
+    <EditForm Model="newWeightCalculation" OnValidSubmit="CalculateRequiredWeightPlates">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="input-group mb-3">
+            <span for="newWeightCalculation.TargetWeight" class="input-group-text">Target Weight (kg)</span>
+            <InputNumber id="newWeightCalculation.TargetWeight" class="form-control" @bind-Value="newWeightCalculation.TargetWeight"></InputNumber>
+        </div>
+
+        <div class="input-group mb-3">
+            <span for="newWeightCalculation.LiftingDeviceSelected" class="input-group-text">Lifting Device (ends)</span>
+            <InputSelect class="form-control" @bind-Value="newWeightCalculation.LiftingDeviceSelected">
+                @foreach (var device in Enum.GetValues<LiftingDeviceEndsOption>())
+                {
+                    <option value="@device">@Enum.GetName(device)</option>
+                }
+            </InputSelect> 
+        </div>
 
 
 
-<div class="mb-3">
+        <button type="submit" class="btn btn-success">Calculate</button>
+    </EditForm>
 </div>
 
-@code {
-    private bool displayPersonaliseForm = false;
-    private bool savePersonalisationsDisabled = true;
-    private bool deletePersonalisationsDisabled = true;
-    private WeightCalculationUiModel? weightCalculation;
-    private WeightCalculationUiModel newWeightCalculation = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        weightCalculation = await localStorage.GetItemAsync<WeightCalculationUiModel>("weightCalculation");
-
-        if (weightCalculation is null)
+<table class="table table-responsive">
+    @{
+        if (newWeightCalculation.WeightsSelectedPerEnd.Where(x => x.Count > 0).Count() > 0)
         {
-            weightCalculation = GetDefaultWeightCalculation();
-        }
-        else
-        {
-            deletePersonalisationsDisabled = false;
-        }
-
-        newWeightCalculation = weightCalculation;
-    }
-
-    private WeightCalculationUiModel GetDefaultWeightCalculation()
-    {
-        WeightCalculationUiModel output = new();
-
-        output.WeightsAvailable = new()
+            <thead>
+                <tr>
+                    <th>Weight (kg)</th>
+                    <th>Count (plates)</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in newWeightCalculation.WeightsSelectedPerEnd.Where(x => x.Count > 0))
             {
-                new WeightPlateUiModel { Weight = 0.5, Count = 10 },
-                new WeightPlateUiModel { Weight = 1.25, Count = 10 },
-                new WeightPlateUiModel { Weight = 2.5, Count = 10 },
-                new WeightPlateUiModel { Weight = 5, Count = 10 },
-                new WeightPlateUiModel { Weight = 10, Count = 10 },
-                new WeightPlateUiModel { Weight = 20, Count = 10 }
-            };
-
-        output.LiftingDevicesAvailable = new()
-            {
-                new LiftingDeviceUiModel { EndsCount = LiftingDeviceEndsOption.Single, MaxPlatesPerEnd = 10 },
-                new LiftingDeviceUiModel { EndsCount = LiftingDeviceEndsOption.Double, MaxPlatesPerEnd = 10 }
-            };
-
-        return output;
-    }
-
-    private async Task SavePersonalisationsAsync()
-    {
-        if (newWeightCalculation.CookiesAccepted)
-        {
-            await localStorage.SetItemAsync<WeightCalculationUiModel>("weightCalculation", newWeightCalculation);
-            deletePersonalisationsDisabled = false;
+                <tr>
+                    <th>@item.Weight</th>
+                    <th>@item.Count</th>
+                </tr>
+            }
+            </tbody>
         }
     }
+</table>
 
-    private async Task DeletePersonalisationAsync()
-    {
-        await localStorage.RemoveItemAsync("weightCalculation");
-        newWeightCalculation = GetDefaultWeightCalculation();
-        deletePersonalisationsDisabled = true;
-    }
-
-    private void ToggleDisplayPersonaliseForm()
-    {
-        displayPersonaliseForm = displayPersonaliseForm ? false : true;
-    }
-
-    // a form lets user customise e.g. count of weights
-    // normally hidden, reveal by button press
-    // cookie check, customise button greyed out until check box checked
-    // if customise buttons clicked, write customisations to local storage with blazored
+@* <p>@elapsedTime.TotalSeconds</p> *@
 
 
-    // another form - input target weight and select single / double ended lifting device
-    // click button to calculate required weights for target
-    // use default values (e.g. weight plate counts) if custom values not available
-    // result - Display table? count of each required weight
-    // display error messages somehow
-}
+
+
