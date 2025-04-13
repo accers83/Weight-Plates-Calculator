@@ -27,11 +27,25 @@ public class WeightPlatesProcessor : IWeightPlatesProcessor
         maxPlates = maxPlates <= 15 ? maxPlates : 15;
         weightPlates = weightPlates.OrderByDescending(x => x.Weight).ToList();
         double sumWeight = 0;
+        var plateCount = 0;
 
         for (int i = 0; i < weightPlates.Count(); i++)
         {
             for (var j = 0; j < weightPlates.Count; j++)
             {
+
+                plateCount = 0;
+                combination.ForEach(x => plateCount += x.Count);
+                if (plateCount >= maxPlates)
+                {
+                    break;
+                }
+
+                if (weightPlates[i].Count - combination[i].Count <= 0)
+                {
+                    break;
+                }
+
                 sumWeight += weightPlates[i].Weight;
 
                 if (sumWeight <= targetWeight)
@@ -47,6 +61,15 @@ public class WeightPlatesProcessor : IWeightPlatesProcessor
 
             if (sumWeight == targetWeight)
             {
+                break;
+            }
+
+            plateCount = 0;
+            combination.ForEach(x => plateCount += x.Count);
+            if (sumWeight < targetWeight && plateCount == maxPlates)
+            {
+                combination.ForEach(x => x.Count = 0);
+                sumWeight = 0;
                 break;
             }
 

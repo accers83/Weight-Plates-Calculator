@@ -6,118 +6,10 @@ namespace WeightPlatesCalculatorLibraryTests;
 
 public class WeightPlatesProcessorTests
 {
-    //public static IEnumerable<object[]> When_Multiple_Eligible_Combinations_GetPlatesForTargetWeight_Should_Return_Smallest_Data =>
-    //    new List<object[]>
-    //    {
-    //        new object[] { new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5, 2.5 }, new List<double> { 2.5 }, 2.5 },
-    //        new object[] { new List<double> { 2.5, 2.5, 2.5, 2.5, 10 }, new List<double> { 10 }, 10 },
-    //        new object[] { new List<double> { 0.5, 1.25, 1.25, 2.5 }, new List<double> { 0.5, 2.5 }, 3 }
-    //    };
 
-    //public static IEnumerable<object[]> When_MaxPlates_Less_Than_Combination_Count_GetPlatesForTargetWeight_Should_Not_Return_Combination_Data =>
-    //new List<object[]>
-    //{
-    //        new object[] { new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5, 2.5 }, new List<double> { }, 1.5, 2 },
-    //        new object[] { new List<double> { 2.5, 2.5, 2.5, 2.5 }, new List<double> { }, 10, 3 },
-    //        new object[] { new List<double> { 1.25, 2.5, 10, 10, 10 }, new List<double> { }, 33.75, 4 }
-    //};
 
-    //public static IEnumerable<object[]> GetPlatesForTargetWeight_Should_Return_Combination_In_Less_Than_One_Second_Data =>
-    //new List<object[]>
-    //{
-    //        new object[] 
-    //        { 
-    //            new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5,
-    //                               1.25, 1.25, 1.25, 1.25, 1.25,
-    //                               2.5, 2.5, 2.5, 2.5, 2.5,
-    //                               5, 5, 5, 5, 5,
-    //                               10, 10, 10, 10, 10,
-    //                               20, 20, 20, 20, 20
-    //                               }, 
-    //            new List<double> { 2.5 },
-    //            2.5,
-    //            5
-    //        },
-    //        new object[]
-    //        {
-    //            new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 
-    //                               1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 
-    //                               2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 
-    //                               5, 5, 5, 5, 5, 5, 
-    //                               10, 10, 10, 10, 10, 10, 
-    //                               20, 20, 20, 20, 20, 20,
-    //                               },
-    //            new List<double> { 2.5 },
-    //            2.5,
-    //            6
-    //        },
-    //        new object[]
-    //        {
-    //            new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-    //                               1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25,
-    //                               2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5,
-    //                               5, 5, 5, 5, 5, 5, 5,
-    //                               10, 10, 10, 10, 10, 10, 10,
-    //                               20, 20, 20, 20, 20, 20, 20
-    //                               },
-    //            new List<double> { 2.5 },
-    //            2.5,
-    //            7
-    //        },
-    //        new object[]
-    //        {
-    //            new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5,/* 0.5, 0.5,*/
-    //                               1.25, 1.25,/* 1.25, 1.25, 1.25, 1.25, 1.25,*/
-    //                               2.5, /*2.5, 2.5, 2.5, 2.5, 2.5, 2.5,*/
-    //                               //5, 5, 5, 5, 5, 5, 5,
-    //                               //10, 10, 10, 10, 10, 10, 10,
-    //                               //20, 20, 20, 20, 20, 20, 20
-    //                               },
-    //            new List<double> { 2.5 },
-    //            2.5,
-    //            7
-    //        },
-    //        new object[]
-    //        {
-    //            new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-    //                               1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25,
-    //                               2.5, 2.5, 2.5, 2.5, 2.5, /* 2.5, 2.5,*/
-    //                               5, 5, /* 5, 5, 5, 5, 5,*/
-    //                               10, /* 10, 10, 10, 10, 10, 10,*/
-    //                               //20, 20, 20, 20, 20, 20, 20
-    //                               },
-    //            new List<double> { 0.5, 0.5, 0.5, 10 },
-    //            11.5,
-    //            7
-    //        },
-    //        new object[]
-    //        {
-    //            new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-    //                               1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25,
-    //                               2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5,
-    //                               5, 5, 5, 5, 5, 5, 5,
-    //                               10, 10, 10, /*10, 10, 10, 10,*/
-    //                               20, /*20, 20, 20, 20, 20, 20*/
-    //                               },
-    //            new List<double> { 5, 10, 20 },
-    //            35,
-    //            7
-    //        },
-    //        new object[]
-    //        {
-    //            new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-    //                               1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25,
-    //                               2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5,
-    //                               5, 5, 5, 5, 5, 5, 5,
-    //                               10, 10, 10, 10,/* 10, 10, 10,*/
-    //                               20, 20,/* 20, 20, 20, 20, 20*/
-    //                               },
-    //            new List<double> { 5, 20, 20 },
-    //            45,
-    //            7
-    //        }
 
-    //};
+    
 
     //public static IEnumerable<object[]> When_TargetWeight_Not_Divisible_By_0Point25_With_Remainder_0_GetPlatesForTargetWeight_Should_Throw_Exception_Data =>
     //new List<object[]>
@@ -254,43 +146,193 @@ public class WeightPlatesProcessorTests
     //    Assert.Equal(expected, result);
     //}
 
-    //[Theory]
-    //[MemberData(nameof(When_Multiple_Eligible_Combinations_GetPlatesForTargetWeight_Should_Return_Smallest_Data))]
-    //public void When_Multiple_Eligible_Combinations_GetPlatesForTargetWeight_Should_Return_Smallest(List<double> weights, List<double> expected, double targetWeight)
-    //{
-    //    // Arrange
-    //    List<double> result = new();
+    public static IEnumerable<object[]> When_Multiple_Eligible_Combinations_GetPlatesForTargetWeight_Should_Return_Smallest_Data =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 1 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 5 },
+                },
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 1 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                },
+                2.5,
+                10
+            },
+            new object[]
+            {
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 1 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 4 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                },
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 1 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 0 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                },
+                10,
+                10
+            },
+            new object[]
+            {
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 1 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 2 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 1 },
+                },
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 1 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 1 },
+                },
+                3,
+                10
+            }
+        };
 
-    //    var weightPlatesCalculator = new WeightPlatesProcessor();
+    [Theory]
+    [MemberData(nameof(When_Multiple_Eligible_Combinations_GetPlatesForTargetWeight_Should_Return_Smallest_Data))]
+    public void When_Multiple_Eligible_Combinations_GetPlatesForTargetWeight_Should_Return_Smallest(List<WeightPlateModel> availableWeights, List<WeightPlateModel> expectedWeights, double targetWeight, int maxPlates)
+    {
+        // Arrange
+        List<WeightPlateModel> result = new()
+        {
+            new WeightPlateModel{ Weight = 20, Count = 0 },
+            new WeightPlateModel{ Weight = 10, Count = 0 },
+            new WeightPlateModel{ Weight = 5, Count = 0 },
+            new WeightPlateModel{ Weight = 2.5, Count = 0 },
+            new WeightPlateModel{ Weight = 1.25, Count = 0 },
+            new WeightPlateModel{ Weight = 0.5, Count = 0 },
+        };
 
-    //    // Act
-    //    weightPlatesCalculator.GetPlatesForTargetWeight(weights,
-    //                                                    10,
-    //                                                    targetWeight,
-    //                                                    result);
+        var weightPlatesCalculator = new WeightPlatesProcessor();
 
-    //    // Assert
-    //    Assert.Equal(expected, result);
-    //}
+        // Act
+        weightPlatesCalculator.GetPlatesForTargetWeight(availableWeights,
+                                                        maxPlates,
+                                                        targetWeight,
+                                                        result);
 
-    //[Theory]
-    //[MemberData(nameof(When_MaxPlates_Less_Than_Combination_Count_GetPlatesForTargetWeight_Should_Not_Return_Combination_Data))]
-    //public void When_MaxPlates_Less_Than_Combination_Count_GetPlatesForTargetWeight_Should_Not_Return_Combination(List<double> weights, List<double> expected, double targetWeight, int maxPlates)
-    //{
-    //    // Arrange
-    //    List<double> result = new();
+        // Assert
+        for (int i = 0; i < expectedWeights.Count(); i++)
+        {
+            Assert.Equal(expectedWeights[i].Weight, result[i].Weight);
+            Assert.Equal(expectedWeights[i].Count, result[i].Count);
+        }
+    }
 
-    //    var weightPlatesCalculator = new WeightPlatesProcessor();
+    public static IEnumerable<object[]> When_MaxPlates_Less_Than_Combination_Count_GetPlatesForTargetWeight_Should_Not_Return_Combination_Data =>
+    new List<object[]>
+    {
+        new object[]
+        {
+            new List<WeightPlateModel>
+            {
+                new WeightPlateModel{ Weight = 20, Count = 0 },
+                new WeightPlateModel{ Weight = 10, Count = 0 },
+                new WeightPlateModel{ Weight = 5, Count = 0 },
+                new WeightPlateModel{ Weight = 2.5, Count = 1 },
+                new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                new WeightPlateModel{ Weight = 0.5, Count = 5 },
+            },
+            new List<WeightPlateModel>
+            {
+                new WeightPlateModel{ Weight = 20, Count = 0 },
+                new WeightPlateModel{ Weight = 10, Count = 0 },
+                new WeightPlateModel{ Weight = 5, Count = 0 },
+                new WeightPlateModel{ Weight = 2.5, Count = 0 },
+                new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                new WeightPlateModel{ Weight = 0.5, Count = 0 },
+            },
+            1.5,
+            2
+        },
+        new object[]
+        {
+            new List<WeightPlateModel>
+            {
+                new WeightPlateModel{ Weight = 20, Count = 0 },
+                new WeightPlateModel{ Weight = 10, Count = 4 },
+                new WeightPlateModel{ Weight = 5, Count = 0 },
+                new WeightPlateModel{ Weight = 2.5, Count = 0 },
+                new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                new WeightPlateModel{ Weight = 0.5, Count = 0 },
+            },
+            new List<WeightPlateModel>
+            {
+                new WeightPlateModel{ Weight = 20, Count = 0 },
+                new WeightPlateModel{ Weight = 10, Count = 0 },
+                new WeightPlateModel{ Weight = 5, Count = 0 },
+                new WeightPlateModel{ Weight = 2.5, Count = 0 },
+                new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                new WeightPlateModel{ Weight = 0.5, Count = 0 },
+            },
+            40,
+            3
+        },
+    };
 
-    //    // Act
-    //    weightPlatesCalculator.GetPlatesForTargetWeight(weights,
-    //                                                    maxPlates,
-    //                                                    targetWeight,
-    //                                                    result);
 
-    //    // Assert
-    //    Assert.Equal(expected, result);
-    //}
+    [Theory]
+    [MemberData(nameof(When_MaxPlates_Less_Than_Combination_Count_GetPlatesForTargetWeight_Should_Not_Return_Combination_Data))]
+    public void When_MaxPlates_Less_Than_Combination_Count_GetPlatesForTargetWeight_Should_Not_Return_Combination(List<WeightPlateModel> availableWeights, List<WeightPlateModel> expectedWeights, double targetWeight, int maxPlates)
+    {
+        // Arrange
+        List<WeightPlateModel> result = new()
+        {
+            new WeightPlateModel{ Weight = 20, Count = 0 },
+            new WeightPlateModel{ Weight = 10, Count = 0 },
+            new WeightPlateModel{ Weight = 5, Count = 0 },
+            new WeightPlateModel{ Weight = 2.5, Count = 0 },
+            new WeightPlateModel{ Weight = 1.25, Count = 0 },
+            new WeightPlateModel{ Weight = 0.5, Count = 0 },
+        };
+
+        var weightPlatesCalculator = new WeightPlatesProcessor();
+
+        // Act
+        weightPlatesCalculator.GetPlatesForTargetWeight(availableWeights,
+                                                        maxPlates,
+                                                        targetWeight,
+                                                        result);
+
+        // Assert
+        for (int i = 0; i < expectedWeights.Count(); i++)
+        {
+            Assert.Equal(expectedWeights[i].Weight, result[i].Weight);
+            Assert.Equal(expectedWeights[i].Count, result[i].Count);
+        }
+    }
 
     //[Theory]
     //[MemberData(nameof(When_TargetWeight_Not_Divisible_By_0Point25_With_Remainder_0_GetPlatesForTargetWeight_Should_Throw_Exception_Data))]
@@ -340,10 +382,10 @@ public class WeightPlatesProcessorTests
                 {
                     new WeightPlateModel{ Weight = 20, Count = 2 },
                     new WeightPlateModel{ Weight = 10, Count = 0 },
-                    new WeightPlateModel{ Weight = 5, Count = 1 },
-                    new WeightPlateModel{ Weight = 2.5, Count = 0 },
-                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
-                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 1 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 1 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 3 },
                 },
                 new List<WeightPlateModel>
                 {
