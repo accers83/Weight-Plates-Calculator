@@ -123,28 +123,113 @@ public class WeightPlatesProcessorTests
         }
     }
 
-    //[Theory]
+    public static IEnumerable<object[]> When_Mismatching_Target_And_Single_Weight_GetPlatesForTargetWeight_Should_Return_No_Weights_Data =>
+    new List<object[]>
+    {
+            new object[]
+            {
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 1 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                },
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 0 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                },
+                1.25,
+                10
+            },
+            new object[]
+            {
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 0 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 6 },
+                },
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 0 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                },
+                10,
+                10
+            },
+            new object[]
+            {
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 1 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 2 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                },
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 0 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                },
+                3,
+                10
+            }
+    };
+
+    [Theory]
     //[InlineData(0.5, 1.25)]
     //[InlineData(1.25, 0.5)]
     //[InlineData(1.25, 10)]
-    //public void When_Mismatching_Target_And_Single_Weight_GetPlatesForTargetWeight_Should_Return_No_Weights(double weight, double targetWeight)
-    //{
-    //    // Arrange
-    //    List<double> expected = new();
+    [MemberData(nameof(When_Mismatching_Target_And_Single_Weight_GetPlatesForTargetWeight_Should_Return_No_Weights_Data))]
+    public void When_Mismatching_Target_And_Single_Weight_GetPlatesForTargetWeight_Should_Return_No_Weights(List<WeightPlateModel> availableWeights, List<WeightPlateModel> expectedWeights, double targetWeight, int maxPlates)
+    {
+        // Arrange
+        List<WeightPlateModel> result = new()
+        {
+            new WeightPlateModel{ Weight = 20, Count = 0 },
+            new WeightPlateModel{ Weight = 10, Count = 0 },
+            new WeightPlateModel{ Weight = 5, Count = 0 },
+            new WeightPlateModel{ Weight = 2.5, Count = 0 },
+            new WeightPlateModel{ Weight = 1.25, Count = 0 },
+            new WeightPlateModel{ Weight = 0.5, Count = 0 },
+        };
 
-    //    List<double> result = new();
+        var weightPlatesCalculator = new WeightPlatesProcessor();
 
-    //    var weightPlatesCalculator = new WeightPlatesProcessor();
+        // Act
+        weightPlatesCalculator.GetPlatesForTargetWeight(availableWeights,
+                                                        maxPlates,
+                                                        targetWeight,
+                                                        result);
 
-    //    // Act
-    //    weightPlatesCalculator.GetPlatesForTargetWeight(new List<double> { weight },
-    //                                                    10,
-    //                                                    targetWeight,
-    //                                                    result);
-
-    //    // Assert
-    //    Assert.Equal(expected, result);
-    //}
+        // Assert
+        for (int i = 0; i < expectedWeights.Count(); i++)
+        {
+            Assert.Equal(expectedWeights[i].Weight, result[i].Weight);
+            Assert.Equal(expectedWeights[i].Count, result[i].Count);
+        }
+    }
 
     public static IEnumerable<object[]> When_Multiple_Eligible_Combinations_GetPlatesForTargetWeight_Should_Return_Smallest_Data =>
         new List<object[]>

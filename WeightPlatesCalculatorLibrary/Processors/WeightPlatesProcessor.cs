@@ -163,6 +163,14 @@ public class WeightPlatesProcessor : IWeightPlatesProcessor
 
                                     i -= 5;
                                 }
+                                else
+                                {
+                                    sumWeight = 0;
+                                    foreach (var item in combination)
+                                    {
+                                        item.Count = 0;
+                                    }
+                                }
                             }
                         }
                     }
