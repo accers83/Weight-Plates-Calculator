@@ -12,7 +12,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddTransient<IWeightPlatesService, WeightPlatesService>();
 builder.Services.AddTransient<IWeightPlatesProcessor, WeightPlatesProcessor>();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 
 await builder.Build().RunAsync();

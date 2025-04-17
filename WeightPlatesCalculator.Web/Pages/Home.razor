@@ -6,111 +6,148 @@
 
 <PageTitle>Weight Plates Calculator</PageTitle>
 
-<h1>Weight Plates Calculator</h1>
 
+<div class="container">
 
-<button type="button" class="btn btn-info" @onclick="ToggleDisplayPersonaliseForm">Personalise App</button>
-<br />
-
-@if (displayPersonaliseForm)
-{
-    @* should this be a seperate component? *@
-    <div class="m-3">
-        <EditForm Model="newWeightCalculation" OnValidSubmit="SavePersonalisationsAsync">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-
-            <div class="input-group mb-3">
-                <div class="me-3">
-                    <InputCheckbox class="form-check-input mt-0" id="newWeightCalculation.CookiesAccepted" @bind-Value="newWeightCalculation.CookiesAccepted" />
-                    <label for="newWeightCalculation.CookiesAccepted" class="form-label alert-warning p-1">Are you happy for this app to store non-essentials data on your device?</label>
-                </div>
-            </div>
-
-
-            @{
-                foreach (var weight in newWeightCalculation.WeightsAvailable)
-                {
-                    <div class="input-group mb-3">
-                        <span for="weight.Count" class="input-group-text">@weight.Weight kg</span>
-                        <InputNumber id="weight.Count" class="form-control" @bind-Value="weight.Count"></InputNumber>
-                    </div>
-                }
-            }
-
-            @{
-                foreach (var liftingDevice in newWeightCalculation.LiftingDevicesAvailable)
-                {
-                    <div class="input-group mb-3">
-                        <span for="liftingDevice.EndsCount" class="input-group-text">@liftingDevice.EndsCount</span>
-                        <InputNumber id="liftingDevice.EndsCount" class="form-control" @bind-Value="liftingDevice.MaxPlatesPerEnd"></InputNumber>
-                    </div>
-                }
-            }
-
-
-            @{
-                savePersonalisationsDisabled = newWeightCalculation.CookiesAccepted ? false : true;
-            }
-
-            <button type="submit" class="btn btn-success" disabled=@savePersonalisationsDisabled>Save Personalisations</button>
-            <button type="button" class="btn btn-outline-danger" disabled="@deletePersonalisationsDisabled" @onclick="DeletePersonalisationAsync">Remove Personalisations</button>
-        </EditForm>
+    <div class="py-5 text-center">
+        <img class="d-block mx-auto mb-4" src="/Weight-Plate-Lifting-Pin-Logo_72-101.png" alt="" width="72" height="101">
+        <h1>Weight Plates Calculator</h1>
+        <p class="lead">This app provides an offline available solution to identify the required weight plates for a specified target weight, for single and double ended lifting devices. 
+            It enables personalisation through the use of local storage caching.</p>
     </div>
-}
 
-<div class="m-3">
-    <EditForm Model="newWeightCalculation" OnValidSubmit="CalculateRequiredWeightPlates">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+    <div class="row g-5">
+        <div class="col-md-5 col-lg-4 order-md-last">
+            <h3 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-primary">Personalise App</span>
+            </h3>
 
-        <div class="input-group mb-3">
-            <span for="newWeightCalculation.TargetWeight" class="input-group-text">Target Weight (kg)</span>
-            <InputNumber id="newWeightCalculation.TargetWeight" class="form-control" @bind-Value="newWeightCalculation.TargetWeight"></InputNumber>
-        </div>
+            <button type="button" class="btn btn-info" @onclick="ToggleDisplayPersonaliseForm">Personalise App</button>
+            <br />
+            <br />
 
-        <div class="input-group mb-3">
-            <span for="newWeightCalculation.LiftingDeviceSelected" class="input-group-text">Lifting Device (ends)</span>
-            <InputSelect class="form-control" @bind-Value="newWeightCalculation.LiftingDeviceSelected">
-                @foreach (var device in Enum.GetValues<LiftingDeviceEndsOption>())
-                {
-                    <option value="@device">@Enum.GetName(device)</option>
-                }
-            </InputSelect> 
-        </div>
-
-
-
-        <button type="submit" class="btn btn-success">Calculate</button>
-    </EditForm>
-</div>
-
-<table class="table table-responsive">
-    @{
-        if (newWeightCalculation.WeightsSelectedPerEnd.Where(x => x.Count > 0).Count() > 0)
-        {
-            <thead>
-                <tr>
-                    <th>Weight (kg)</th>
-                    <th>Count (plates)</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in newWeightCalculation.WeightsSelectedPerEnd.Where(x => x.Count > 0))
+            @if (displayPersonaliseForm)
             {
-                <tr>
-                    <th>@item.Weight</th>
-                    <th>@item.Count</th>
-                </tr>
+                @* should this be a seperate component? *@
+                <EditForm Model="newWeightCalculation" OnValidSubmit="SavePersonalisationsAsync">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="alert alert-warning" role="alert">
+                        To personlise your experience, this app will store non-essential data on your device. 
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="me-3">
+                            <InputCheckbox class="form-check-input mt-0 align-middle" id="newWeightCalculation.CookiesAccepted" @bind-Value="newWeightCalculation.CookiesAccepted" />
+                            <label for="newWeightCalculation.CookiesAccepted" class="form-label alert-warning p-1">Accept non-essential use of local storage?</label>
+                        </div>
+                    </div>
+
+                    <h4>Weight Plate Counts</h4>
+
+                    @{
+                        foreach (var weight in newWeightCalculation.WeightsAvailable)
+                        {
+                            var weightId = $"weight{weight.Weight}";
+                            <div class="form-floating mb-3">
+                                <InputNumber id="weightId" class="form-control" @bind-Value="weight.Count"></InputNumber>
+                                <label for="weightId">@weight.Weight kg:</label>
+                            </div>
+                        }
+                    }
+
+                    <h4>Lifting Device Plate Maximums</h4>
+
+                    @{
+                        foreach (var liftingDevice in newWeightCalculation.LiftingDevicesAvailable)
+                        {
+                            var endsCountId = $"liftingDevice.EndsCount{liftingDevice.EndsCount}";
+                            <div class="form-floating mb-3">
+                                <InputNumber id=@endsCountId class="form-control" @bind-Value="liftingDevice.MaxPlatesPerEnd"></InputNumber>
+                                <label for=@endsCountId>@liftingDevice.EndsCount ended - maximum plates per end:</label>
+                            </div>
+                        }
+                    }
+
+                    @{
+                        savePersonalisationsDisabled = newWeightCalculation.CookiesAccepted ? false : true;
+                    }
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-success" disabled=@savePersonalisationsDisabled>Save</button>
+                        <button type="button" class="btn btn-outline-danger" disabled="@deletePersonalisationsDisabled" @onclick="DeletePersonalisationAsync">Remove</button>
+                    </div>
+                    </EditForm>
             }
-            </tbody>
-        }
-    }
-</table>
+        </div>
 
-@* <p>@elapsedTime.TotalSeconds</p> *@
+        <div class="col-md-7 col-lg-8">
+            <h3 class="d-flex justify-content-between align-items-center mb-3">
+                Weight Calculation
+            </h3>
 
+            <EditForm Model="newWeightCalculation" OnValidSubmit="CalculateRequiredWeightPlates">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="row g-3">
+                    <div class="col-sm-6">
+
+                        <div class="form-floating mb-3">
+                            <InputNumber id="newWeightCalculation.TargetWeight" class="form-control" @bind-Value="newWeightCalculation.TargetWeight"></InputNumber>
+                            <label for=newWeightCalculation.TargetWeight>Target Weight (kg): </label>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6">
+
+                        <div class="form-floating mb-3">
+                            <InputSelect class="form-control" @bind-Value="newWeightCalculation.LiftingDeviceSelected">
+                                @foreach (var device in Enum.GetValues<LiftingDeviceEndsOption>())
+                                {
+                                    <option value="@device">@Enum.GetName(device) ended</option>
+                                }
+                            </InputSelect>
+                            <label for=newWeightCalculation.LiftingDeviceSelected>Lifting device: </label>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success">Calculate</button>
+            </EditForm>
+            <div class="col-12">
+
+                @{
+                    if (newWeightCalculation.WeightsSelectedPerEnd.Where(x => x.Count > 0).Count() > 0)
+                    {
+                        <div class="col-12">
+                            <table class="table table-responsive">
+
+                                <thead>
+                                    <tr>
+                                        <th>Weight (kg)</th>
+                                        <th>Count (plates)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in newWeightCalculation.WeightsSelectedPerEnd.Where(x => x.Count > 0))
+                                    {
+                                        <tr>
+                                            <th>@item.Weight</th>
+                                            <th>@item.Count</th>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
