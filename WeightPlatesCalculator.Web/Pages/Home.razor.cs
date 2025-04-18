@@ -13,6 +13,9 @@ namespace WeightPlatesCalculator.Web.Pages
         private WeightCalculationUiModel? weightCalculation;
         private WeightCalculationUiModel newWeightCalculation = new();
         private TimeSpan elapsedTime = new();
+        private string weightPlateCalculatorErrorMessage = string.Empty;
+        private bool weightPlateCalculatorErrorMessageHidden = true;
+        private bool targetWeightAchieved = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -86,6 +89,7 @@ namespace WeightPlatesCalculator.Web.Pages
 
         private void CalculateRequiredWeightPlates()
         {
+            targetWeightAchieved = false;
             WeightCalculationModel weightCalculationTemp = new()
             {
                 WeightsAvailable = new(),
@@ -128,13 +132,28 @@ namespace WeightPlatesCalculator.Web.Pages
             }
 
             long startTime = Stopwatch.GetTimestamp();
-            weightPlatesService.Initiate(weightCalculationTemp);
+            try
+            {
+                weightPlatesService.Initiate(weightCalculationTemp);
+                weightPlateCalculatorErrorMessage = string.Empty;
+                weightPlateCalculatorErrorMessageHidden = true;
+            }
+            catch (Exception ex)
+            {
+                 weightPlateCalculatorErrorMessage = ex.Message;
+                weightPlateCalculatorErrorMessageHidden = false;
+            }
             elapsedTime = Stopwatch.GetElapsedTime(startTime);
 
             newWeightCalculation.WeightsSelectedPerEnd = new();
 
             foreach (var item in weightCalculationTemp.WeightsSelectedPerEnd)
             {
+                if (targetWeightAchieved == false && item.Count > 0)
+                {
+                    targetWeightAchieved = true;
+                }
+
                 WeightPlateUiModel weightPlateTemp = new()
                 {
                     Weight = item.Weight,
@@ -142,6 +161,12 @@ namespace WeightPlatesCalculator.Web.Pages
                 };
 
                 newWeightCalculation.WeightsSelectedPerEnd.Add(weightPlateTemp);
+            }
+
+            if (targetWeightAchieved == false)
+            {
+                weightPlateCalculatorErrorMessage = "Target weight not achieved";
+                weightPlateCalculatorErrorMessageHidden = false; 
             }
         }
     }

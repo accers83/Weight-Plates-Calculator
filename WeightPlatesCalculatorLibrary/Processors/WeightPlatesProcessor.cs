@@ -13,7 +13,7 @@ public class WeightPlatesProcessor : IWeightPlatesProcessor
         // target weight must be divisable by .25
         if (targetWeight <= 0)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException("Target Weight", "Must be greater than 0.");
         }
 
         var fractionalDigits = targetWeight - Math.Truncate(targetWeight);
@@ -21,7 +21,7 @@ public class WeightPlatesProcessor : IWeightPlatesProcessor
 
         if (modulasRemainder != 0)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException( "Target Weight", "Must be divisible by 0.25 with no remainder.");
         }
 
         maxPlates = maxPlates <= 15 ? maxPlates : 15;
