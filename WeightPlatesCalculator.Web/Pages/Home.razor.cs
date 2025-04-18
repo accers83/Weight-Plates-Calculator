@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Threading.Tasks;
 using WeightPlatesCalculator.Web.Models;
 using WeightPlatesCalculatorLibrary.Models;
 
@@ -53,7 +52,13 @@ namespace WeightPlatesCalculator.Web.Pages
                 new LiftingDeviceUiModel { EndsCount = LiftingDeviceEndsOption.Double, MaxPlatesPerEnd = 10 }
             };
 
-            output.WeightsSelectedPerEnd = new()
+            output.WeightsSelectedPerEnd = GetDefaultWeightsSelectedPerEnd();
+            return output;
+        }
+
+        private List<WeightPlateUiModel> GetDefaultWeightsSelectedPerEnd()
+        {
+            List<WeightPlateUiModel> output = new()
             {
                 new WeightPlateUiModel { Weight = 20, Count = 0 },
                 new WeightPlateUiModel { Weight = 10, Count = 0 },
@@ -90,46 +95,7 @@ namespace WeightPlatesCalculator.Web.Pages
         private void CalculateRequiredWeightPlates()
         {
             targetWeightAchieved = false;
-            WeightCalculationModel weightCalculationTemp = new()
-            {
-                WeightsAvailable = new(),
-                LiftingDevicesAvailable = new(),
-                LiftingDeviceSelected = newWeightCalculation.LiftingDeviceSelected,
-                TargetWeight = newWeightCalculation.TargetWeight,
-                WeightsSelectedPerEnd = new()
-            };
-
-            weightCalculationTemp.WeightsSelectedPerEnd = new()
-            {
-                new WeightPlateModel { Weight = 20, Count = 0 },
-                new WeightPlateModel { Weight = 10, Count = 0 },
-                new WeightPlateModel { Weight = 5, Count = 0 },
-                new WeightPlateModel { Weight = 2.5, Count = 0 },
-                new WeightPlateModel { Weight = 1.25, Count = 0 },
-                new WeightPlateModel { Weight = 0.5, Count = 0 }
-            };
-
-            foreach (var item in newWeightCalculation.WeightsAvailable)
-            {
-                WeightPlateModel weightPlateTemp = new()
-                {
-                    Weight = item.Weight,
-                    Count = item.Count
-                };
-
-                weightCalculationTemp.WeightsAvailable.Add(weightPlateTemp);
-            }
-
-            foreach (var item in newWeightCalculation.LiftingDevicesAvailable)
-            {
-                LiftingDeviceModel liftingDeviceTemp = new()
-                {
-                    EndsCount = item.EndsCount,
-                    MaxPlatesPerEnd = item.MaxPlatesPerEnd
-                };
-
-                weightCalculationTemp.LiftingDevicesAvailable.Add(liftingDeviceTemp);
-            }
+            var weightCalculationTemp = CreateWeightCalculationModel();
 
             long startTime = Stopwatch.GetTimestamp();
             try
@@ -140,13 +106,12 @@ namespace WeightPlatesCalculator.Web.Pages
             }
             catch (Exception ex)
             {
-                 weightPlateCalculatorErrorMessage = ex.Message;
+                weightPlateCalculatorErrorMessage = ex.Message;
                 weightPlateCalculatorErrorMessageHidden = false;
             }
             elapsedTime = Stopwatch.GetElapsedTime(startTime);
 
             newWeightCalculation.WeightsSelectedPerEnd = new();
-
             foreach (var item in weightCalculationTemp.WeightsSelectedPerEnd)
             {
                 if (targetWeightAchieved == false && item.Count > 0)
@@ -154,20 +119,47 @@ namespace WeightPlatesCalculator.Web.Pages
                     targetWeightAchieved = true;
                 }
 
-                WeightPlateUiModel weightPlateTemp = new()
-                {
-                    Weight = item.Weight,
-                    Count = item.Count
-                };
-
+                WeightPlateUiModel weightPlateTemp = new() { Weight = item.Weight, Count = item.Count };
                 newWeightCalculation.WeightsSelectedPerEnd.Add(weightPlateTemp);
             }
 
             if (targetWeightAchieved == false)
             {
                 weightPlateCalculatorErrorMessage = "Target weight not achieved";
-                weightPlateCalculatorErrorMessageHidden = false; 
+                weightPlateCalculatorErrorMessageHidden = false;
             }
+        }
+
+        private WeightCalculationModel CreateWeightCalculationModel()
+        {
+            WeightCalculationModel output = new()
+            {
+                WeightsAvailable = new(),
+                LiftingDevicesAvailable = new(),
+                LiftingDeviceSelected = newWeightCalculation.LiftingDeviceSelected,
+                TargetWeight = newWeightCalculation.TargetWeight,
+                WeightsSelectedPerEnd = new()
+            };
+
+            foreach (var item in GetDefaultWeightsSelectedPerEnd())
+            {
+                WeightPlateModel weightPlateTemp = new() { Weight = item.Weight, Count = item.Count };
+                output.WeightsSelectedPerEnd.Add(weightPlateTemp);
+            }
+
+            foreach (var item in newWeightCalculation.WeightsAvailable)
+            {
+                WeightPlateModel weightPlateTemp = new() { Weight = item.Weight, Count = item.Count };
+                output.WeightsAvailable.Add(weightPlateTemp);
+            }
+
+            foreach (var item in newWeightCalculation.LiftingDevicesAvailable)
+            {
+                LiftingDeviceModel liftingDeviceTemp = new() { EndsCount = item.EndsCount, MaxPlatesPerEnd = item.MaxPlatesPerEnd };
+                output.LiftingDevicesAvailable.Add(liftingDeviceTemp);
+            }
+
+            return output;
         }
     }
 }
