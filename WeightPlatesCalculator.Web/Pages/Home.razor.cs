@@ -11,7 +11,6 @@ namespace WeightPlatesCalculator.Web.Pages
         private bool deletePersonalisationsDisabled = true;
         private WeightCalculationUiModel? weightCalculation;
         private WeightCalculationUiModel newWeightCalculation = new();
-        private TimeSpan elapsedTime = new();
         private string weightPlateCalculatorErrorMessage = string.Empty;
         private bool weightPlateCalculatorErrorMessageHidden = true;
         private bool targetWeightAchieved = false;
@@ -97,7 +96,6 @@ namespace WeightPlatesCalculator.Web.Pages
             targetWeightAchieved = false;
             var weightCalculationTemp = CreateWeightCalculationModel();
 
-            long startTime = Stopwatch.GetTimestamp();
             try
             {
                 weightPlatesService.Initiate(weightCalculationTemp);
@@ -109,7 +107,6 @@ namespace WeightPlatesCalculator.Web.Pages
                 weightPlateCalculatorErrorMessage = ex.Message;
                 weightPlateCalculatorErrorMessageHidden = false;
             }
-            elapsedTime = Stopwatch.GetElapsedTime(startTime);
 
             newWeightCalculation.WeightsSelectedPerEnd = new();
             foreach (var item in weightCalculationTemp.WeightsSelectedPerEnd)
