@@ -17,6 +17,7 @@ public class WeightPlatesService : IWeightPlatesService
     {
         List<WeightPlateModel> weightsAvailable = new();
         int maxPlatesPerEnd = 0;
+        double targetWeight = 0;
 
         if (weightCalculation.LiftingDeviceSelected == LiftingDeviceEndsOption.Double)
         {
@@ -38,6 +39,7 @@ public class WeightPlatesService : IWeightPlatesService
 
             maxPlatesPerEnd = weightCalculation.LiftingDevicesAvailable.Where(x => x.EndsCount == LiftingDeviceEndsOption.Double).First().MaxPlatesPerEnd;
             weightsAvailable = weightCalculation.WeightsAvailable.DivideCountByTwo();
+            targetWeight = weightCalculation.TargetWeight / 2;
         }
         else
         {
@@ -59,11 +61,12 @@ public class WeightPlatesService : IWeightPlatesService
 
             maxPlatesPerEnd = weightCalculation.LiftingDevicesAvailable.Where(x => x.EndsCount == LiftingDeviceEndsOption.Single).First().MaxPlatesPerEnd;
             weightsAvailable = weightCalculation.WeightsAvailable;
+            targetWeight = weightCalculation.TargetWeight;
         }
 
         _weightPlatesProcessor.GetPlatesForTargetWeight(weightsAvailable,
                                                         maxPlatesPerEnd,
-                                                        weightCalculation.TargetWeight,
+                                                        targetWeight,
                                                         weightCalculation.WeightsSelectedPerEnd);
     }
 }
