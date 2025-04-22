@@ -120,7 +120,7 @@ namespace WeightPlatesCalculator.Web.Pages
                 newWeightCalculation.WeightsSelectedPerEnd.Add(weightPlateTemp);
             }
 
-            if (targetWeightAchieved == false)
+            if (targetWeightAchieved == false && string.IsNullOrWhiteSpace(weightPlateCalculatorErrorMessage))
             {
                 weightPlateCalculatorErrorMessage = "Target weight not achieved";
                 weightPlateCalculatorErrorMessageHidden = false;

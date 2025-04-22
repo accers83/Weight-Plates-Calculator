@@ -4,13 +4,11 @@ namespace WeightPlatesCalculatorLibrary.Processors;
 
 public class WeightPlatesProcessor : IWeightPlatesProcessor
 {
-
     public void GetPlatesForTargetWeight(List<WeightPlateModel> weightPlates,
-                                         int maxPlates,
-                                         double targetWeight,
-                                         List<WeightPlateModel> combination)
+                                     int maxPlates,
+                                     double targetWeight,
+                                     List<WeightPlateModel> combination)
     {
-        // target weight must be divisable by .25
         if (targetWeight <= 0)
         {
             throw new ArgumentOutOfRangeException("Target Weight", "Must be greater than 0.");
@@ -21,161 +19,121 @@ public class WeightPlatesProcessor : IWeightPlatesProcessor
 
         if (modulasRemainder != 0)
         {
-            throw new ArgumentOutOfRangeException( "Target Weight", "Must be divisible by 0.25 with no remainder.");
+            throw new ArgumentOutOfRangeException("Target Weight", "Must be divisible by 0.25 with no remainder.");
         }
 
-        maxPlates = maxPlates <= 15 ? maxPlates : 15;
+        maxPlates = maxPlates <= 25 ? maxPlates : 25;
         weightPlates = weightPlates.OrderByDescending(x => x.Weight).ToList();
         double sumWeight = 0;
-        var plateCount = 0;
 
-        for (int i = 0; i < weightPlates.Count(); i++)
+        GetPlatesForTargetWeight(weightPlates,
+                                          maxPlates,
+                                          targetWeight,
+                                          combination,
+                                          sumWeight,
+                                          0);
+    }
+
+    private void GetPlatesForTargetWeight(List<WeightPlateModel> weightPlates,
+                                         int maxPlates,
+                                         double targetWeight,
+                                         List<WeightPlateModel> combination,
+                                         double sumWeight,
+                                         int index)
+    {
+        if (index >= weightPlates.Count())
         {
-            for (var j = 0; j < weightPlates.Count; j++)
-            {
+            return;
+        }
 
-                plateCount = 0;
-                combination.ForEach(x => plateCount += x.Count);
-                if (plateCount >= maxPlates)
-                {
-                    break;
-                }
-
-                if (weightPlates[i].Count - combination[i].Count <= 0)
-                {
-                    break;
-                }
-
-                sumWeight += weightPlates[i].Weight;
-
-                if (sumWeight <= targetWeight)
-                {
-                    combination.Where(x => x.Weight == weightPlates[i].Weight).First().Count++;
-                }
-                else
-                {
-                    sumWeight -= weightPlates[i].Weight;
-                    break;
-                }
-            }
-
-            if (sumWeight == targetWeight)
-            {
-                break;
-            }
-
+        int plateCount = 0;
+        for (var j = 0; j < weightPlates[index].Count; j++)
+        {
             plateCount = 0;
             combination.ForEach(x => plateCount += x.Count);
-            if (sumWeight < targetWeight && plateCount == maxPlates)
+            if (plateCount >= maxPlates)
             {
-                combination.ForEach(x => x.Count = 0);
-                sumWeight = 0;
                 break;
             }
 
-            if (i == (weightPlates.Count - 1) && sumWeight < targetWeight)
+            if (weightPlates[index].Count - combination[index].Count <= 0)
             {
-                if (combination[i - 1].Count > 0)
-                {
-                    sumWeight -= combination[i - 1].Weight;
-                    combination[i - 1].Count--;
+                break;
+            }
 
-                    sumWeight -= combination[i].Weight * combination[i].Count;
-                    combination[i].Count = 0;
+            sumWeight += weightPlates[index].Weight;
 
-                    i -= 1;
-                }
-                else
-                {
-                    if (combination[i - 2].Count > 0)
-                    {
-                        sumWeight -= combination[i - 2].Weight;
-                        combination[i - 2].Count--;
-
-                        sumWeight -= combination[i - 1].Weight * combination[i - 1].Count;
-                        combination[i - 1].Count = 0;
-
-                        sumWeight -= combination[i].Weight * combination[i].Count;
-                        combination[i].Count = 0;
-
-                        i -= 2;
-                    }
-                    else
-                    {
-                        if (combination[i - 3].Count > 0)
-                        {
-                            sumWeight -= combination[i - 3].Weight;
-                            combination[i - 3].Count--;
-
-                            sumWeight -= combination[i - 2].Weight * combination[i - 2].Count;
-                            combination[i - 2].Count = 0;
-
-                            sumWeight -= combination[i - 1].Weight * combination[i - 1].Count;
-                            combination[i - 1].Count = 0;
-
-                            sumWeight -= combination[i].Weight * combination[i].Count;
-                            combination[i].Count = 0;
-
-                            i -= 3;
-                        }
-                        else
-                        {
-                            if (combination[i - 4].Count > 0)
-                            {
-                                sumWeight -= combination[i - 4].Weight;
-                                combination[i - 4].Count--;
-
-                                sumWeight -= combination[i - 3].Weight * combination[i - 3].Count;
-                                combination[i - 3].Count = 0;
-
-                                sumWeight -= combination[i - 2].Weight * combination[i - 2].Count;
-                                combination[i - 2].Count = 0;
-
-                                sumWeight -= combination[i - 1].Weight * combination[i - 1].Count;
-                                combination[i - 1].Count = 0;
-
-                                sumWeight -= combination[i].Weight * combination[i].Count;
-                                combination[i].Count = 0;
-
-                                i -= 4;
-                            }
-                            else
-                            {
-                                if (combination[i - 5].Count > 0)
-                                {
-                                    sumWeight -= combination[i - 5].Weight;
-                                    combination[i - 5].Count--;
-
-                                    sumWeight -= combination[i - 4].Weight * combination[i - 4].Count;
-                                    combination[i - 4].Count = 0;
-
-                                    sumWeight -= combination[i - 3].Weight * combination[i - 3].Count;
-                                    combination[i - 3].Count = 0;
-
-                                    sumWeight -= combination[i - 2].Weight * combination[i - 2].Count;
-                                    combination[i - 2].Count = 0;
-
-                                    sumWeight -= combination[i - 1].Weight * combination[i - 1].Count;
-                                    combination[i - 1].Count = 0;
-
-                                    sumWeight -= combination[i].Weight * combination[i].Count;
-                                    combination[i].Count = 0;
-
-                                    i -= 5;
-                                }
-                                else
-                                {
-                                    sumWeight = 0;
-                                    foreach (var item in combination)
-                                    {
-                                        item.Count = 0;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            if (sumWeight <= targetWeight)
+            {
+                combination.Where(x => x.Weight == weightPlates[index].Weight).First().Count++;
+            }
+            else
+            {
+                sumWeight -= weightPlates[index].Weight;
+                break;
             }
         }
+
+        if (sumWeight == targetWeight)
+        {
+            return;
+        }
+
+        plateCount = 0;
+        combination.ForEach(x => plateCount += x.Count);
+        if (sumWeight < targetWeight && plateCount == maxPlates)
+        {
+            combination.ForEach(x => x.Count = 0);
+            sumWeight = 0;
+            return;
+        }
+
+        if (index == (weightPlates.Count() - 1) && sumWeight < targetWeight)
+        {
+            (index, sumWeight) = BacktrackPlateCombination(combination,
+                                             sumWeight,
+                                             index,
+                                             1);
+        }
+
+        GetPlatesForTargetWeight(weightPlates,
+                                  maxPlates,
+                                  targetWeight,
+                                  combination,
+                                  sumWeight,
+                                  index + 1);
+    }
+
+    private (int index, double sumWeight) BacktrackPlateCombination(List<WeightPlateModel> combination, double sumWeight, int index, int backtrackCount)
+    {
+        var indexMinusBacktrack = index - backtrackCount;
+        if (indexMinusBacktrack == 0 && (combination[0].Count == 0))
+        {
+            sumWeight = 0;
+            foreach (var item in combination)
+            {
+                item.Count = 0;
+            }
+        }
+        else if (combination[indexMinusBacktrack].Count > 0)
+        {
+            sumWeight -= combination[indexMinusBacktrack].Weight;
+            combination[indexMinusBacktrack].Count--;
+
+            for (int i = 0; i < backtrackCount; i++)
+            {
+                var indexMinusI = index - i;
+                sumWeight -= combination[indexMinusI].Weight * combination[indexMinusI].Count;
+                combination[indexMinusI].Count = 0;
+            }
+
+            index -= backtrackCount;
+        }
+        else if (combination[indexMinusBacktrack].Count == 0)
+        {
+            BacktrackPlateCombination(combination, sumWeight, index, backtrackCount + 1);
+        }
+
+        return (index, sumWeight);
     }
 }
