@@ -8,7 +8,7 @@ public class WeightCalculationUiModel
     [Required]
     [Range(0.5, 100)]
     [Display(Name = "Target Weight")]
-    public double TargetWeight { get; set; } // TODO: rename to TargetWeightTotal?
+    public double TargetWeight { get; set; } = 0.5;
     public bool CookiesAccepted { get; set; } = false;
     public LiftingDeviceEndsOption LiftingDeviceSelected { get; set; } = LiftingDeviceEndsOption.Single;
     public List<LiftingDeviceUiModel> LiftingDevicesAvailable { get; set; } = new();
