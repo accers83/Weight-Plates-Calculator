@@ -2,7 +2,7 @@
 
 namespace WeightPlatesCalculatorLibrary.Helpers;
 
-public static class WeightHelpers
+public static class WeightPlatesHelper
 {
     public static List<WeightPlateModel> DivideCountByTwo(this List<WeightPlateModel> weightsAvailable)
     {

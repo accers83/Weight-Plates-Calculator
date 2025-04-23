@@ -198,11 +198,67 @@ public class WeightPlatesProcessorTests
     };
 
     [Theory]
-    //[InlineData(0.5, 1.25)]
-    //[InlineData(1.25, 0.5)]
-    //[InlineData(1.25, 10)]
     [MemberData(nameof(When_Mismatching_Target_And_Single_Weight_GetPlatesForTargetWeight_Should_Return_No_Weights_Data))]
     public void When_Mismatching_Target_And_Single_Weight_GetPlatesForTargetWeight_Should_Return_No_Weights(List<WeightPlateModel> availableWeights, List<WeightPlateModel> expectedWeights, double targetWeight, int maxPlates)
+    {
+        // Arrange
+        List<WeightPlateModel> result = new()
+        {
+            new WeightPlateModel{ Weight = 20, Count = 0 },
+            new WeightPlateModel{ Weight = 10, Count = 0 },
+            new WeightPlateModel{ Weight = 5, Count = 0 },
+            new WeightPlateModel{ Weight = 2.5, Count = 0 },
+            new WeightPlateModel{ Weight = 1.25, Count = 0 },
+            new WeightPlateModel{ Weight = 0.5, Count = 0 },
+        };
+
+        var weightPlatesCalculator = new WeightPlatesProcessor();
+
+        // Act
+        weightPlatesCalculator.GetPlatesForTargetWeight(availableWeights,
+                                                        maxPlates,
+                                                        targetWeight,
+                                                        result);
+
+        // Assert
+        for (int i = 0; i < expectedWeights.Count(); i++)
+        {
+            Assert.Equal(expectedWeights[i].Weight, result[i].Weight);
+            Assert.Equal(expectedWeights[i].Count, result[i].Count);
+        }
+    }
+
+    public static IEnumerable<object[]> When_Target_Weight_Cannot_Be_Reached_GetPlatesForTargetWeight_Should_Return_No_Weights_Data =>
+new List<object[]>
+{
+            new object[]
+            {
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 1 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 2 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 3 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 3 },
+                },
+                new List<WeightPlateModel>
+                {
+                    new WeightPlateModel{ Weight = 20, Count = 0 },
+                    new WeightPlateModel{ Weight = 10, Count = 0 },
+                    new WeightPlateModel{ Weight = 5, Count = 0 },
+                    new WeightPlateModel{ Weight = 2.5, Count = 0 },
+                    new WeightPlateModel{ Weight = 1.25, Count = 0 },
+                    new WeightPlateModel{ Weight = 0.5, Count = 0 },
+                },
+                20,
+                10
+            }
+    };
+
+    [Theory]
+    [MemberData(nameof(When_Target_Weight_Cannot_Be_Reached_GetPlatesForTargetWeight_Should_Return_No_Weights_Data))]
+    public void When_Target_Weight_Cannot_Be_Reached_GetPlatesForTargetWeight_Should_Return_No_Weights(List<WeightPlateModel> availableWeights, List<WeightPlateModel> expectedWeights, double targetWeight, int maxPlates)
     {
         // Arrange
         List<WeightPlateModel> result = new()

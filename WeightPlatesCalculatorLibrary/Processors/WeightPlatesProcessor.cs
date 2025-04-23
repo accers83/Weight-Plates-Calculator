@@ -127,11 +127,11 @@ public class WeightPlatesProcessor : IWeightPlatesProcessor
                 combination[indexMinusI].Count = 0;
             }
 
-            index -= backtrackCount;
+            index = indexMinusBacktrack;
         }
         else if (combination[indexMinusBacktrack].Count == 0)
         {
-            BacktrackPlateCombination(combination, sumWeight, index, backtrackCount + 1);
+            (index, sumWeight) = BacktrackPlateCombination(combination, sumWeight, index, backtrackCount + 1);
         }
 
         return (index, sumWeight);

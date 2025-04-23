@@ -1,6 +1,5 @@
-using System.Diagnostics;
+using WeightPlatesCalculator.Web.Helpers;
 using WeightPlatesCalculator.Web.Models;
-using WeightPlatesCalculatorLibrary.Models;
 
 namespace WeightPlatesCalculator.Web.Pages
 {
@@ -9,7 +8,7 @@ namespace WeightPlatesCalculator.Web.Pages
         private bool displayPersonaliseForm = false;
         private bool savePersonalisationsDisabled = true;
         private bool deletePersonalisationsDisabled = true;
-        private WeightCalculationUiModel? weightCalculation;
+        private WeightCalculationUiModel? savedWeightCalculation;
         private WeightCalculationUiModel newWeightCalculation = new();
         private string weightPlateCalculatorErrorMessage = string.Empty;
         private bool weightPlateCalculatorErrorMessageHidden = true;
@@ -17,57 +16,18 @@ namespace WeightPlatesCalculator.Web.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            weightCalculation = await localStorage.GetItemAsync<WeightCalculationUiModel>("weightCalculation");
+            savedWeightCalculation = await localStorage.GetItemAsync<WeightCalculationUiModel>("weightCalculation");
 
-            if (weightCalculation is null)
+            if (savedWeightCalculation is null)
             {
-                weightCalculation = GetDefaultWeightCalculation();
+                savedWeightCalculation = WeightPlatesHelper.GetUiDefaultWeightCalculation();
             }
             else
             {
                 deletePersonalisationsDisabled = false;
             }
 
-            newWeightCalculation = weightCalculation;
-        }
-
-        private WeightCalculationUiModel GetDefaultWeightCalculation()
-        {
-            WeightCalculationUiModel output = new();
-
-            output.WeightsAvailable = new()
-            {
-                new WeightPlateUiModel { Weight = 20, Count = 10 },
-                new WeightPlateUiModel { Weight = 10, Count = 10 },
-                new WeightPlateUiModel { Weight = 5, Count = 10 },
-                new WeightPlateUiModel { Weight = 2.5, Count = 10 },
-                new WeightPlateUiModel { Weight = 1.25, Count = 10 },
-                new WeightPlateUiModel { Weight = 0.5, Count = 10 }
-            };
-
-            output.LiftingDevicesAvailable = new()
-            {
-                new LiftingDeviceUiModel { EndsCount = LiftingDeviceEndsOption.Single, MaxPlatesPerEnd = 10 },
-                new LiftingDeviceUiModel { EndsCount = LiftingDeviceEndsOption.Double, MaxPlatesPerEnd = 10 }
-            };
-
-            output.WeightsSelectedPerEnd = GetDefaultWeightsSelectedPerEnd();
-            return output;
-        }
-
-        private List<WeightPlateUiModel> GetDefaultWeightsSelectedPerEnd()
-        {
-            List<WeightPlateUiModel> output = new()
-            {
-                new WeightPlateUiModel { Weight = 20, Count = 0 },
-                new WeightPlateUiModel { Weight = 10, Count = 0 },
-                new WeightPlateUiModel { Weight = 5, Count = 0 },
-                new WeightPlateUiModel { Weight = 2.5, Count = 0 },
-                new WeightPlateUiModel { Weight = 1.25, Count = 0 },
-                new WeightPlateUiModel { Weight = 0.5, Count = 0 }
-            };
-
-            return output;
+            newWeightCalculation = savedWeightCalculation;
         }
 
         private async Task SavePersonalisationsAsync()
@@ -82,7 +42,7 @@ namespace WeightPlatesCalculator.Web.Pages
         private async Task DeletePersonalisationAsync()
         {
             await localStorage.RemoveItemAsync("weightCalculation");
-            newWeightCalculation = GetDefaultWeightCalculation();
+            newWeightCalculation = WeightPlatesHelper.GetUiDefaultWeightCalculation();
             deletePersonalisationsDisabled = true;
         }
 
@@ -94,11 +54,11 @@ namespace WeightPlatesCalculator.Web.Pages
         private void CalculateRequiredWeightPlates()
         {
             targetWeightAchieved = false;
-            var weightCalculationTemp = CreateWeightCalculationModel();
+            var libraryWeightCalculation = newWeightCalculation.ToLibraryWeightCalculation();
 
             try
             {
-                weightPlatesService.Initiate(weightCalculationTemp);
+                weightPlatesService.Initiate(libraryWeightCalculation);
                 weightPlateCalculatorErrorMessage = string.Empty;
                 weightPlateCalculatorErrorMessageHidden = true;
             }
@@ -108,55 +68,13 @@ namespace WeightPlatesCalculator.Web.Pages
                 weightPlateCalculatorErrorMessageHidden = false;
             }
 
-            newWeightCalculation.WeightsSelectedPerEnd = new();
-            foreach (var item in weightCalculationTemp.WeightsSelectedPerEnd)
-            {
-                if (targetWeightAchieved == false && item.Count > 0)
-                {
-                    targetWeightAchieved = true;
-                }
-
-                WeightPlateUiModel weightPlateTemp = new() { Weight = item.Weight, Count = item.Count };
-                newWeightCalculation.WeightsSelectedPerEnd.Add(weightPlateTemp);
-            }
+            (targetWeightAchieved, newWeightCalculation.WeightsSelectedPerEnd) = libraryWeightCalculation.WeightsSelectedPerEnd.ToUiWeightsSelectedPerEnd();
 
             if (targetWeightAchieved == false && string.IsNullOrWhiteSpace(weightPlateCalculatorErrorMessage))
             {
                 weightPlateCalculatorErrorMessage = "Target weight not achieved";
                 weightPlateCalculatorErrorMessageHidden = false;
             }
-        }
-
-        private WeightCalculationModel CreateWeightCalculationModel()
-        {
-            WeightCalculationModel output = new()
-            {
-                WeightsAvailable = new(),
-                LiftingDevicesAvailable = new(),
-                LiftingDeviceSelected = newWeightCalculation.LiftingDeviceSelected,
-                TargetWeight = newWeightCalculation.TargetWeight,
-                WeightsSelectedPerEnd = new()
-            };
-
-            foreach (var item in GetDefaultWeightsSelectedPerEnd())
-            {
-                WeightPlateModel weightPlateTemp = new() { Weight = item.Weight, Count = item.Count };
-                output.WeightsSelectedPerEnd.Add(weightPlateTemp);
-            }
-
-            foreach (var item in newWeightCalculation.WeightsAvailable)
-            {
-                WeightPlateModel weightPlateTemp = new() { Weight = item.Weight, Count = item.Count };
-                output.WeightsAvailable.Add(weightPlateTemp);
-            }
-
-            foreach (var item in newWeightCalculation.LiftingDevicesAvailable)
-            {
-                LiftingDeviceModel liftingDeviceTemp = new() { EndsCount = item.EndsCount, MaxPlatesPerEnd = item.MaxPlatesPerEnd };
-                output.LiftingDevicesAvailable.Add(liftingDeviceTemp);
-            }
-
-            return output;
         }
     }
 }
