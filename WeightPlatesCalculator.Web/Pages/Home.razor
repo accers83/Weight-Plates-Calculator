@@ -9,11 +9,11 @@
 
 <div class="container">
 
-    <div class="py-5 text-center">
+    <div class="py-4 text-center">
         <img class="d-block mx-auto mb-4" src="/Weight-Plate-Lifting-Pin-Logo_72-101.png" alt="" width="72" height="101">
         <h1>Weight Plates Calculator</h1>
-        <p class="lead">This app provides an offline available solution to identify the required weight plates for a specified target weight, for single and double ended lifting devices. 
-            It enables personalisation through the use of local storage caching.</p>
+        <p class="lead">This app helps you quickly find the right weight plates to reach your target weight, whether you're using a single or double-ended lifting device. 
+            It works offline and can remember your preferences using local storage, so it's ready whenever you need it.</p>
     </div>
 
     <div class="row g-5">
@@ -24,10 +24,12 @@
 
             <button type="button" class="btn btn-info" @onclick="ToggleDisplayPersonaliseForm">Personalise App</button>
             <br />
-            <br />
+
 
             @if (displayPersonaliseForm)
             {
+                <br />
+
                 @* should this be a seperate component? *@
                 <EditForm Model="newWeightCalculation" OnValidSubmit="SavePersonalisationsAsync">
                     <DataAnnotationsValidator />
@@ -126,7 +128,7 @@
                 @{
                     if (newWeightCalculation.WeightsSelectedPerEnd.Where(x => x.Count > 0).Count() > 0)
                     {
-                        <div class="col-12 mt-3">
+                        <div class="col-12 mt-4">
                             <h3>Result</h3>
 
                             <table class="table table-responsive table-striped">
