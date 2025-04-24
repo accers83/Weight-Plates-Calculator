@@ -6,21 +6,6 @@ namespace WeightPlatesCalculatorLibraryTests;
 
 public class WeightPlatesProcessorTests
 {
-
-
-
-    
-
-    //public static IEnumerable<object[]> When_TargetWeight_Not_Divisible_By_0Point25_With_Remainder_0_GetPlatesForTargetWeight_Should_Throw_Exception_Data =>
-    //new List<object[]>
-    //{
-    //        new object[] { new List<double> { 0.5, 0.5, 0.5, 0.5, 0.5, 2.5 }, 2.51 },
-    //        new object[] { new List<double> { 2.5, 2.5, 2.5, 2.5, 10 }, 10.49 },
-    //        new object[] { new List<double> { 0.5, 1.25, 1.25, 2.5 }, 3.09 },
-    //        new object[] { new List<double> { 0.5, 1.25, 1.25, 2.5 }, 0.99999 },
-    //        new object[] { new List<double> { 0.5, 1.25, 1.25, 2.5 }, 0.00001 },
-    //};
-
     public static IEnumerable<object[]> When_Matching_Target_And_Single_Weight_GetPlatesForTargetWeight_Should_Return_Single_Weight_Data =>
     new List<object[]>
     {
@@ -229,8 +214,8 @@ public class WeightPlatesProcessorTests
     }
 
     public static IEnumerable<object[]> When_Target_Weight_Cannot_Be_Reached_GetPlatesForTargetWeight_Should_Return_No_Weights_Data =>
-new List<object[]>
-{
+    new List<object[]>
+    {
             new object[]
             {
                 new List<WeightPlateModel>
@@ -443,7 +428,6 @@ new List<object[]>
         },
     };
 
-
     [Theory]
     [MemberData(nameof(When_MaxPlates_Less_Than_Combination_Count_GetPlatesForTargetWeight_Should_Not_Return_Combination_Data))]
     public void When_MaxPlates_Less_Than_Combination_Count_GetPlatesForTargetWeight_Should_Not_Return_Combination(List<WeightPlateModel> availableWeights, List<WeightPlateModel> expectedWeights, double targetWeight, int maxPlates)
@@ -474,22 +458,6 @@ new List<object[]>
             Assert.Equal(expectedWeights[i].Count, result[i].Count);
         }
     }
-
-    //[Theory]
-    //[MemberData(nameof(When_TargetWeight_Not_Divisible_By_0Point25_With_Remainder_0_GetPlatesForTargetWeight_Should_Throw_Exception_Data))]
-    //public void When_TargetWeight_Not_Divisible_By_0Point25_With_Remainder_0_GetPlatesForTargetWeight_Should_Throw_Exception(List<double> weights, double targetWeight)
-    //{
-    //    // Arrange
-    //    List<double> result = new();
-
-    //    var weightPlatesCalculator = new WeightPlatesProcessor();
-
-    //    // Act and Assert
-    //    Assert.Throws<ArgumentOutOfRangeException>(() => weightPlatesCalculator.GetPlatesForTargetWeight(weights,
-    //                                                    10,
-    //                                                    targetWeight,
-    //                                                    result));
-    //}
 
     public static IEnumerable<object[]> GetPlatesForTargetWeight_Should_Return_Combination_In_Less_Than_One_Second_Data =>
         new List<object[]>

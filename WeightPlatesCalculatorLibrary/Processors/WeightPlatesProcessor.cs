@@ -27,11 +27,11 @@ public class WeightPlatesProcessor : IWeightPlatesProcessor
         double sumWeight = 0;
 
         GetPlatesForTargetWeight(weightPlates,
-                                          maxPlates,
-                                          targetWeight,
-                                          combination,
-                                          sumWeight,
-                                          0);
+                                 maxPlates,
+                                 targetWeight,
+                                 combination,
+                                 sumWeight,
+                                 0);
     }
 
     private void GetPlatesForTargetWeight(List<WeightPlateModel> weightPlates,
