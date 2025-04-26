@@ -1,5 +1,5 @@
 # Weight-Plates-Calculator
-Portfolio project. Weight-Plates-Calculator provides an offline available web solution for weight plate calculation, including local caching of personalised configuration.
+Portfolio project. Weight-Plates-Calculator provides an offline ready web solution to identify which of the available weight plates is required to reach the requested target weight. Personalised configuration can be cached between sessions using local storage.
 
 ## Key features
 The Weight-Plates-Calculator demonstrates use of the following key features.
